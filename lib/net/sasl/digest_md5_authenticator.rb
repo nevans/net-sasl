@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "digest/md5"
+require "securerandom"
 require "strscan"
 
 module Net
@@ -34,9 +35,10 @@ module Net
       # incorrect, and authentication will fail."
       #
       # This should generally be instantiated via Net::SASL.authenticator.
-      def initialize(username, password, authzid = nil, **_options)
+      def initialize(username, password, authzid = nil, uri: nil, **_options)
         super
         @username, @password, @authzid = username, password, authzid
+        @uri = uri
         @nc, @stage = {}, STAGE_ONE
       end
 
@@ -68,18 +70,17 @@ module Net
 
           response = {
             nonce: sparams["nonce"],
-            username: @username,
+            username: @username.dup,
             realm: sparams["realm"],
-            cnonce: Digest::MD5.hexdigest("%.15f:%.15f:%d" % [Time.now.to_f, rand,
-                                                              Process.pid.to_s,]),
-            'digest-uri': "imap/#{sparams["realm"]}",
-            qop: "auth",
+            cnonce: SecureRandom.hex(32),
+            'digest-uri': @uri || +"imap/#{sparams["realm"]}",
+            qop: +"auth",
             maxbuf: 65_535,
             nc: "%08d" % nc(sparams["nonce"]),
             charset: sparams["charset"],
           }
 
-          response[:authzid] = @authzid unless @authzid.nil?
+          response[:authzid] = @authzid.dup unless @authzid.nil?
 
           # now, the real thing
           a0 = Digest::MD5.digest([ response.values_at(:username, :realm),
