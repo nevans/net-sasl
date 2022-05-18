@@ -27,4 +27,17 @@ class Net::SASLTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { plain("u", "p", "bad\0authz") }
   end
 
+  test "SCRAM-SHA-1 authenticator" do
+    authenticator = Net::SASL.authenticator("SCRAM-SHA-1", "user", "pencil", "zid", cnonce: "fyko+d2lbbFgONRv9qkxdawL")
+    assert_equal "n,a=zid,n=user,r=fyko+d2lbbFgONRv9qkxdawL", authenticator.process(nil)
+    refute authenticator.done?
+    assert_equal(
+      "c=biws,r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts=",
+      authenticator.process("r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,s=QSXCR+Q6sek8bf92,i=4096")
+    )
+    refute authenticator.done?
+    assert authenticator.process("v=rmF9pqV8S7suAoZWja4dJRkFsKQ=").nil?
+    assert authenticator.done?
+  end
+
 end

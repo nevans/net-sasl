@@ -7,6 +7,7 @@ require_relative "sasl/cram_md5_authenticator"
 require_relative "sasl/digest_md5_authenticator"
 require_relative "sasl/login_authenticator"
 require_relative "sasl/plain_authenticator"
+require_relative "sasl/scram_authenticator"
 
 module Net
 
@@ -57,10 +58,15 @@ module Net
     # The default global registry used by Net::SASL.authenticator
     DEFAULT_REGISTRY = Registry.new
 
-    add_authenticator "PLAIN",      PlainAuthenticator
-    add_authenticator "LOGIN",      LoginAuthenticator
-    add_authenticator "DIGEST-MD5", DigestMD5Authenticator
-    add_authenticator "CRAM-MD5",   CramMD5Authenticator
+    add_authenticator "PLAIN",         PlainAuthenticator
+    add_authenticator "LOGIN",         LoginAuthenticator
+    add_authenticator "DIGEST-MD5",    DigestMD5Authenticator
+    add_authenticator "CRAM-MD5",      CramMD5Authenticator
+    add_authenticator "SCRAM-SHA-1",   ScramAuthenticator.for("SHA1")
+    add_authenticator "SCRAM-SHA-224", ScramAuthenticator.for("SHA224")
+    add_authenticator "SCRAM-SHA-256", ScramAuthenticator.for("SHA256")
+    add_authenticator "SCRAM-SHA-384", ScramAuthenticator.for("SHA384")
+    add_authenticator "SCRAM-SHA-512", ScramAuthenticator.for("SHA512")
 
   end
 
