@@ -34,9 +34,10 @@ module Net
       # incorrect, and authentication will fail."
       #
       # This should generally be instantiated via Net::SASL.authenticator.
-      def initialize(username, password, authzid = nil, **_options)
+      def initialize(username, password, authzid = nil, uri: nil, **_options)
         super
         @username, @password, @authzid = username, password, authzid
+        @uri = uri
         @nc, @stage = {}, STAGE_ONE
       end
 
@@ -72,7 +73,7 @@ module Net
             realm: sparams["realm"],
             cnonce: Digest::MD5.hexdigest("%.15f:%.15f:%d" % [Time.now.to_f, rand,
                                                               Process.pid.to_s,]),
-            'digest-uri': +"imap/#{sparams["realm"]}",
+            'digest-uri': @uri || +"imap/#{sparams["realm"]}",
             qop: +"auth",
             maxbuf: 65_535,
             nc: "%08d" % nc(sparams["nonce"]),
