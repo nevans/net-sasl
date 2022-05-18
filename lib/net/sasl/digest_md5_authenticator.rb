@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "digest/md5"
+require "securerandom"
 require "strscan"
 
 module Net
@@ -71,8 +72,7 @@ module Net
             nonce: sparams["nonce"],
             username: @username.dup,
             realm: sparams["realm"],
-            cnonce: Digest::MD5.hexdigest("%.15f:%.15f:%d" % [Time.now.to_f, rand,
-                                                              Process.pid.to_s,]),
+            cnonce: SecureRandom.hex(32),
             'digest-uri': @uri || +"imap/#{sparams["realm"]}",
             qop: +"auth",
             maxbuf: 65_535,
