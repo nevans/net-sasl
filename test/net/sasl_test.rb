@@ -27,4 +27,20 @@ class Net::SASLTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { plain("u", "p", "bad\0authz") }
   end
 
+  test "DIGEST-MD5 authenticator" do
+    auth = Net::SASL.authenticator("DIGEST-MD5", "cid", "password", "zid")
+    assert_match(
+      #Regexp.new("nonce=\"OA6MG9tEQGm2hh\",username=\"cid\",realm=\"somerealm\"," \
+      #"cnonce=\"[^\"]+\"," \
+      #"digest-uri=\"imap/somerealm\",qop=\"auth\",maxbuf=65535,nc=00000001," \
+      #"charset=utf-8,authzid=\"zid\",response=
+		/\Anonce="OA6MG9tEQGm2hh",username="cid",realm="somerealm",
+         cnonce="[a-f0-9]+",digest-uri="imap\/somerealm",qop="auth",maxbuf=65535,
+         nc=00000001,charset=utf-8,authzid="zid",
+         response=[a-f0-9]+\Z/x,
+      auth.process(
+        "realm=\"somerealm\",nonce=\"OA6MG9tEQGm2hh\",qop=\"auth\"," \
+        "charset=utf-8,algorithm=md5-sess"))
+  end
+
 end

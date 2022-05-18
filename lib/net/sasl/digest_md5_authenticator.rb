@@ -68,18 +68,18 @@ module Net
 
           response = {
             nonce: sparams["nonce"],
-            username: @username,
+            username: @username.dup,
             realm: sparams["realm"],
             cnonce: Digest::MD5.hexdigest("%.15f:%.15f:%d" % [Time.now.to_f, rand,
                                                               Process.pid.to_s,]),
-            'digest-uri': "imap/#{sparams["realm"]}",
-            qop: "auth",
+            'digest-uri': +"imap/#{sparams["realm"]}",
+            qop: +"auth",
             maxbuf: 65_535,
             nc: "%08d" % nc(sparams["nonce"]),
             charset: sparams["charset"],
           }
 
-          response[:authzid] = @authzid unless @authzid.nil?
+          response[:authzid] = @authzid.dup unless @authzid.nil?
 
           # now, the real thing
           a0 = Digest::MD5.digest([ response.values_at(:username, :realm),
