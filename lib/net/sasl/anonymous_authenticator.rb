@@ -13,9 +13,15 @@ module Net
         super
       end
 
+      def supports_initial_response?
+        true
+      end
+
       # There are no responses for ANONYMOUS
       def process(_data)
-          raise ArgumentError, "SASL ANONYMOUS does not produce any responses"
+        return if @username == ""
+
+        @authzid || @username
       end
 
     end
