@@ -3,6 +3,7 @@
 require_relative "sasl/version"
 require_relative "sasl/registry"
 require_relative "sasl/authenticator"
+require_relative "sasl/anonymous_authenticator"
 require_relative "sasl/cram_md5_authenticator"
 require_relative "sasl/digest_md5_authenticator"
 require_relative "sasl/login_authenticator"
@@ -61,6 +62,7 @@ module Net
     add_authenticator "LOGIN",      LoginAuthenticator
     add_authenticator "DIGEST-MD5", DigestMD5Authenticator
     add_authenticator "CRAM-MD5",   CramMD5Authenticator
+    add_authenticator "ANONYMOUS",  AnonymousAuthenticator
 
   end
 
