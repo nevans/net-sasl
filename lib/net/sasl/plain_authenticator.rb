@@ -27,7 +27,7 @@ module Net
       # the server will derive an identity from the credentials and use that as the
       # authorization identity.
       #
-      # This should generally be instantiated via Net::SASL.authenticator.
+      # Net::SASL.authenticator should be used instead of calling this directly.
       def initialize(username, password, authzid = nil, **_options)
         raise ArgumentError, "username contains NULL" if username&.include?(NULL)
         raise ArgumentError, "password contains NULL" if password&.include?(NULL)

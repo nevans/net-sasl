@@ -25,7 +25,7 @@ module Net
       # a third positional parameter is passed.
       #
       # This should generally be instantiated via Net::SASL.authenticator.
-      def initialize(username, password, **_options)
+      def initialize(username, password, warn_deprecation: true, **_ignored)
         super
         @state = STATE_USER
       end
